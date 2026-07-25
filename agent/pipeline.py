@@ -23,6 +23,8 @@ def clean_all(df):
     df['CustomerDOB'] = pd.to_datetime(df['CustomerDOB'], errors='coerce', dayfirst=True)
     df.loc[df['CustomerDOB'].dt.year == 1800, 'CustomerDOB'] = pd.NaT
     df['Age'] = 2016 - df['CustomerDOB'].dt.year
+    # parsing error due to different formats 
+    df.loc[df['Age'] < 0, 'Age'] = df.loc[df['Age'] < 0, 'Age'] + 100
     df.loc[(df['Age'] > 100) | (df['Age'] < 18), 'Age'] = np.nan
 
     df['TransactionDate'] = pd.to_datetime(df['TransactionDate'], format='%d/%m/%y', errors='coerce')
