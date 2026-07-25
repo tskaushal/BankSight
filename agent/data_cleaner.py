@@ -42,6 +42,12 @@ def clean_gender(df):
     return df
 
 
+def clean_location(df):
+    df['Location'] = df['CustLocation'].fillna('Unknown')
+    df['Location'] = df['Location'].str.strip().str.upper()
+    return df
+
+
 def clean_money(df):
     df.rename(columns={
         'CustAccountBalance': 'Balance',
@@ -63,9 +69,10 @@ def clean_all(df):
 
     df = clean_dates(df)
     df = clean_gender(df)
+    df = clean_location(df)
     df = clean_money(df)
 
-    df.drop(columns=['CustomerDOB', 'CustGender'], inplace=True, errors='ignore')
+    df.drop(columns=['CustomerDOB', 'CustGender', 'CustLocation'], inplace=True, errors='ignore')
 
     n = len(df)
     df.dropna(subset=['CustomerID', 'TransactionDate', 'TransactionAmount'], inplace=True)
@@ -80,12 +87,13 @@ def build_customer_features(df):
         'TransactionAmount': ['count', 'sum', 'mean', 'std', 'max', 'min'],
         'Balance': 'last',
         'Age': 'first',
-        'Gender': 'first'
+        'Gender': 'first',
+        'Location': 'first'
     }).reset_index()
 
     features.columns = ['CustomerID', 'TransactionCount', 'TotalVolume', 'AvgAmount',
                          'StdAmount', 'MaxAmount', 'MinAmount', 'Balance', 'Age',
-                         'Gender']
+                         'Gender', 'Location']
 
     features['StdAmount'] = features['StdAmount'].fillna(0)  
 
