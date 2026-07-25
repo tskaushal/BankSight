@@ -1,0 +1,9 @@
+data/bank_transactions.csv
+data/transactions_cleaned.csv
+data/customer_features.csv
+data/column_info.txt
+data/data_summary.txt
+__pycache__/
+*.pyc
+.venv/
+venv/
