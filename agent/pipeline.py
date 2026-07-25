@@ -95,6 +95,7 @@ def segment(features, priority_pct=0.75, regular_pct=0.25):
     }
     return features, thresholds
 
+
 def run_pipeline():
 
     raw = load_raw()
