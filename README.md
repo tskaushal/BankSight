@@ -96,6 +96,8 @@ The dataset contains more than one million banking transactions. After preproces
 
 The repository already includes the dataset used for this project.
 
+https://www.kaggle.com/datasets/shivamb/bank-customer-segmentation
+
 ## Data Cleaning
 
 The data is cleaned before any analysis is performed.
