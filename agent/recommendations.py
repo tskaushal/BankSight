@@ -50,6 +50,30 @@ def find_transition_candidates(segmented_df, thresholds, top_n=10):
                         'balance_gap', 'volume_gap', 'suggested_action']]
 
 
+def find_retention_risks(segmented_df, thresholds, top_n=10):
+    """
+    Identifies 'regular' customers closest to falling into 'dormant' -
+    the retention risk case. Mirror of find_transition_candidates, but
+    looking downward instead of upward.
+    """
+    regular = segmented_df[segmented_df['Segment'] == 'regular'].copy()
+
+    regular['balance_cushion'] = regular['Balance'] - thresholds['regular_balance_threshold']
+    regular['volume_cushion'] = regular['TotalVolume'] - thresholds['regular_volume_threshold']
+
+    regular['risk_score'] = regular[['balance_cushion', 'volume_cushion']].min(axis=1)
+    at_risk = regular.sort_values('risk_score').head(top_n)
+
+    def suggest_retention_action(row):
+        return (f"Only {row['balance_cushion']:.0f} balance and {row['volume_cushion']:.0f} "
+                f"spend above the dormant threshold. Suggest proactive retention outreach "
+                f"(e.g. fee waiver, personalized offer) before they disengage further.")
+
+    at_risk['retention_action'] = at_risk.apply(suggest_retention_action, axis=1)
+
+    return at_risk[['CustomerID', 'Balance', 'TotalVolume', 'balance_cushion',
+                     'volume_cushion', 'retention_action']]
+
 if __name__ == "__main__":
     from pipeline import run_pipeline
 
