@@ -80,6 +80,19 @@ def parse_intent(query):
         fallback["_source"] = "rule_based_fallback"
         return _apply_overrides(query, fallback)
 
+def generate_answer(query, data):
+    """for natural text and stuff"""
+    try:
+        response = requests.post(
+            CLOUD_FUNCTION_URL,
+            json={"mode": "answer", "query": query, "data": str(data)},
+            timeout=15
+        )
+        result = response.json()
+        return result.get("answer", "Here's what I found:")
+    except Exception as e:
+        print(f"[Answer generation failed: {e}]")
+        return "Here's what I found:"
 
 if __name__ == "__main__":
     test_queries = [
