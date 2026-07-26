@@ -6,3 +6,5 @@ scikit-learn==1.4.0
 streamlit==1.31.0
 plotly==5.18.0
 python-dotenv==1.0.0
+google-genai
+python-dotenv
