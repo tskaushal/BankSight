@@ -6,7 +6,6 @@ CLOUD_FUNCTION_URL = "https://banksight-parser-578208846224.europe-west1.run.app
 
 
 def _rule_based_parse(query):
-    """Fallback parser"""
     q = query.lower().strip()
 
     result = {
@@ -53,29 +52,33 @@ def _rule_based_parse(query):
     return result
 
 
+def _apply_overrides(query, parsed):
+    q = query.lower()
+    is_segmentation_request = (
+        re.search(r"segment .*into", q) or re.search(r"classify .*into", q) or re.search(r"group .*into", q)
+    ) and not parsed.get("customer_id")
+
+    if is_segmentation_request:
+        parsed["intent"] = "segment_overview"
+
+    return parsed
+
+
 def parse_intent(query):
-    """
-    calls the hosted Cloud Function, which runs real Gemini-based
-    intent parsing .
-    """
     try:
-        response = requests.post(
-            CLOUD_FUNCTION_URL,
-            json={"query": query},
-            timeout=15
-        )
+        response = requests.post(CLOUD_FUNCTION_URL, json={"query": query}, timeout=15)
         parsed = response.json()
 
         if "error" in parsed:
             raise Exception(parsed["error"])
 
-        return parsed
+        return _apply_overrides(query, parsed)
 
     except Exception as e:
         print(f"[Cloud function call failed, using rule-based fallback: {e}]")
         fallback = _rule_based_parse(query)
         fallback["_source"] = "rule_based_fallback"
-        return fallback
+        return _apply_overrides(query, fallback)
 
 
 if __name__ == "__main__":
@@ -83,10 +86,7 @@ if __name__ == "__main__":
         "Segment customers into priority, regular and dormant based on balance and transactions",
         "On what basis were priority customers selected?",
         "Why is customer C1010011 in priority?",
-        "What products should we recommend to dormant customers?",
-        "Show me the segment breakdown by city",
     ]
-
     for q in test_queries:
         print(f"\nQuery: {q}")
         print(parse_intent(q))
