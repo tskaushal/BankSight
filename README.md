@@ -173,5 +173,5 @@ Instead, it represents customers with low balances and low transaction volume.
 - Transaction frequency showed very little variation and could not be used for segmentation.
 - The current segmentation is rule-based so  it is easy to understand but may miss more complex customer behaviour.
 - Product recommendations are based on business rules.
-- If the LLM is unavailable, the application switches to the built-in rule-based response system.
+- If the LLM is unavailable, the application switches to the built in rule based response system.
 
