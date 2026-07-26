@@ -175,10 +175,3 @@ Instead, it represents customers with low balances and low transaction volume.
 - Product recommendations are based on business rules.
 - If the LLM is unavailable, the application switches to the built-in rule-based response system.
 
-## Future Work
-
-- Add ML-based segmentation.
-- Improve product recommendations.
-- Add SHAP explainability.
-- Support real-time transaction data.
-- Deploy the application to the cloud.
